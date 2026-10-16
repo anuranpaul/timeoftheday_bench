@@ -48,4 +48,26 @@ public final class TimeOfDay {
         int minute = tmin % 60;
         return pack(hour, minute, second);
     }
+
+    // 1193047 = 2^32/3600 + 1, 71582789 = 2^32/60 + 1
+    private static final long H_MUL32 = 1193047L;
+    private static final long M_MUL32 = 71582789L;
+
+    /** V1: total minutes and hour both come straight from the input, then two subtractions. */
+    public static int v1(int time) {
+        int tmin   = time / 60;
+        int hour   = time / 3600;
+        int second = time - tmin * 60;
+        int minute = tmin - hour * 60;
+        return pack(hour, minute, second);
+    }
+
+    /** V1 with the divisions written as multiply-shift. Good for time in [0..2_257_198]. */
+    public static int v1Fixed(int time) {
+        int tmin   = (int) ((time * M_MUL32) >>> 32);
+        int hour   = (int) ((time * H_MUL32) >>> 32);
+        int second = time - tmin * 60;
+        int minute = tmin - hour * 60;
+        return pack(hour, minute, second);
+    }
 }
