@@ -19,6 +19,8 @@ public final class Verify {
         m.put("traditional3", TimeOfDay::traditional3);
         m.put("v1", TimeOfDay::v1);
         m.put("v1Fixed", TimeOfDay::v1Fixed);
+        m.put("v2", TimeOfDay::v2);
+        m.put("v3", TimeOfDay::v3);
         return m;
     }
 
@@ -72,8 +74,12 @@ public final class Verify {
 
         System.out.println("\n2. claimed input ranges (exhaustive up to the claimed max)");
         checkRange("v1Fixed", TimeOfDay::v1Fixed, 2257198);
+        checkRange("v3", TimeOfDay::v3, 2257198);
+        checkRange("v2", TimeOfDay::v2, 2255818);
 
         System.out.println("\n3. first failure just past each range");
         firstFailureAfter("v1Fixed", TimeOfDay::v1Fixed, 2257198);
+        firstFailureAfter("v3", TimeOfDay::v3, 2257198);
+        firstFailureAfter("v2", TimeOfDay::v2, 2255818);
     }
 }

@@ -70,4 +70,24 @@ public final class TimeOfDay {
         int minute = tmin - hour * 60;
         return pack(hour, minute, second);
     }
+
+    /** V2: hour in the high 32 bits, fraction of an hour in the low bits. Good for time in [0..2_255_818]. */
+    public static int v2(int time) {
+        long hprd   = time * H_MUL32;
+        int  mlow   = time * (int) M_MUL32;     // u32 wrap-around on purpose
+        int  hlow   = (int) hprd;
+        int  hour   = (int) (hprd >>> 32);
+        int  minute = (int) (((hlow & 0xFFFFFFFFL) * 60) >>> 32);
+        int  second = (int) (((mlow & 0xFFFFFFFFL) * 60) >>> 32);
+        return pack(hour, minute, second);
+    }
+
+    /** V3: x mod 60 as (x + 4 * (x / 60)) & 63. Good for time in [0..2_257_198]. */
+    public static int v3(int time) {
+        int tmin   = (int) ((time * M_MUL32) >>> 32);
+        int hour   = (int) ((time * H_MUL32) >>> 32);
+        int second = (time + 4 * tmin) & 63;
+        int minute = (tmin + 4 * hour) & 63;
+        return pack(hour, minute, second);
+    }
 }
