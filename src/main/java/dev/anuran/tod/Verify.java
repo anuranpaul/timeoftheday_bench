@@ -21,6 +21,8 @@ public final class Verify {
         m.put("v1Fixed", TimeOfDay::v1Fixed);
         m.put("v2", TimeOfDay::v2);
         m.put("v3", TimeOfDay::v3);
+        m.put("v2x64", TimeOfDay::v2x64);
+        m.put("v3x64", TimeOfDay::v3x64);
         return m;
     }
 
@@ -76,10 +78,14 @@ public final class Verify {
         checkRange("v1Fixed", TimeOfDay::v1Fixed, 2257198);
         checkRange("v3", TimeOfDay::v3, 2257198);
         checkRange("v2", TimeOfDay::v2, 2255818);
+        checkRange("v3x64", TimeOfDay::v3x64, 2257198);
+        checkRange("v2x64", TimeOfDay::v2x64, 2255818);
 
         System.out.println("\n3. first failure just past each range");
         firstFailureAfter("v1Fixed", TimeOfDay::v1Fixed, 2257198);
         firstFailureAfter("v3", TimeOfDay::v3, 2257198);
         firstFailureAfter("v2", TimeOfDay::v2, 2255818);
+        firstFailureAfter("v3x64", TimeOfDay::v3x64, 2257198);
+        firstFailureAfter("v2x64", TimeOfDay::v2x64, 2255818);
     }
 }

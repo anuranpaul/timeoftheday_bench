@@ -90,4 +90,29 @@ public final class TimeOfDay {
         int minute = (tmin + 4 * hour) & 63;
         return pack(hour, minute, second);
     }
+
+    // 64-bit versions need Math.unsignedMultiplyHigh (JDK 18+)
+    private static final long M_MUL64 = ((1L << 32) / 60 + 1) << 32;
+    private static final long H_MUL64 = ((1L << 32) / 3600 + 1) << 32;
+
+    /** V2, 64-bit. Good for time in [0..2_255_818]. */
+    public static int v2x64(int time) {
+        long t      = time;
+        long hour   = Math.unsignedMultiplyHigh(t, H_MUL64);
+        long hlow   = t * H_MUL64;
+        long mlow   = t * M_MUL64;
+        int  minute = (int) Math.unsignedMultiplyHigh(hlow, 60L);
+        int  second = (int) Math.unsignedMultiplyHigh(mlow, 60L);
+        return pack((int) hour, minute, second);
+    }
+
+    /** V3, 64-bit. Good for time in [0..2_257_198]. */
+    public static int v3x64(int time) {
+        long t      = time;
+        long tmin   = Math.unsignedMultiplyHigh(t, M_MUL64);
+        long hour   = Math.unsignedMultiplyHigh(t, H_MUL64);
+        int  second = (int) ((t + (tmin << 2)) & 63);
+        int  minute = (int) ((tmin + (hour << 2)) & 63);
+        return pack((int) hour, minute, second);
+    }
 }
